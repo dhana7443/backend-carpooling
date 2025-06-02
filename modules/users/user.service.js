@@ -146,8 +146,8 @@ exports.resendEmailOtp = async (email) => {
 exports.loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email: email.trim().toLowerCase() })
     .select("+password") // password is likely select: false
-    .populate("role_id");
-
+    .populate("role_id","name")
+    console.log(user);
   if (!user) {
     throw new Error("Invalid email or password");
   }
@@ -165,12 +165,16 @@ exports.loginUser = async ({ email, password }) => {
     user_id: user._id,
     role_name: user.role_id.name,
   });
-
+  console.log(token);
+  console.log(user.role_id.name);
+  
   // Optionally remove password before sending
   user.password = undefined;
 
-  return { token, user };
-};
+  return {token,user}
+
+  };
+
 
 // Forgot Password - Send OTP
 
@@ -261,7 +265,7 @@ exports.getUserProfile = async (userId, roleName) => {
 };
 
 exports.updateUserProfile = async (userId, roleName, updateData) => {
-  const allowedFields = ["name","email","phone", "gender"];
+  const allowedFields = ["name","email","phone","gender"];
   if (roleName === "driver") {
     allowedFields.push("experience", "license_number", "vehicle_number");
   }

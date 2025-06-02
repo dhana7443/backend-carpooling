@@ -26,4 +26,6 @@ const stopSchema = new Schema({
 }
 );
 
+stopSchema.index({ stop_name: 1, route_id: 1 }, { unique: true });
+
 module.exports = mongoose.model('Stop', stopSchema);

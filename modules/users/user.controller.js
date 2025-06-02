@@ -4,8 +4,10 @@ const userService = require('./user.service');
 
 exports.registerUser = async (req, res) => {
   try {
+    console.log(req.body)
     const userData = req.body; // <-- request body extracted here
     const user = await userService.registerUser(userData);
+    console.log(user)
     res.status(201).json({ message: 'User registered successfully. Please verify your email.', user_id: user.user_id });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -30,6 +32,7 @@ exports.verifyEmailOtp = async (req, res) => {
         role: user.role_id.name
       },
     });
+    console.log(token)
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -48,12 +51,13 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const {user,token} = await userService.loginUser({ email, password });
+    const {token,user} = await userService.loginUser({ email, password });
 
     res.status(200).json({
       message: "Login successful",
       token: token,
       user: {
+        user_id:user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
@@ -105,6 +109,7 @@ exports.getProfile = async (req, res) => {
       message: "User profile fetched successfully",
       user,
     });
+    console.log({user});
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -118,6 +123,7 @@ exports.updateProfile = async (req, res) => {
       message: "Profile updated successfully",
       user: updatedUser,
     });
+    console.log({user});
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -129,7 +135,7 @@ exports.changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
 
     await userService.changePassword(req.user.user_id, currentPassword, newPassword);
-
+    console.log("hello");
     res.status(200).json({ message: "Password changed successfully" });
   } catch (error) {
     res.status(400).json({ message: error.message });

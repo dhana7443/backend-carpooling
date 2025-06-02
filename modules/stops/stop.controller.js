@@ -56,3 +56,31 @@ exports.getStartLocations = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.getOriginStops = async (req, res) => {
+  try {
+    const originStops = await stopService.getOriginStops("origin");
+    console.log({originStops});
+    res.status(200).json(originStops);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+exports.getDestinationsByOrigin = async (req, res) => {
+  try {
+    const { origin } = req.query;
+    console.log(origin);
+    if (!origin) {
+      return res.status(400).json({ message: "Origin stop name is required" });
+    }
+
+    const destinations = await stopService.findDestinationsFromOrigin(origin);
+    console.log(destinations);
+    res.status(200).json({destinations});
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+

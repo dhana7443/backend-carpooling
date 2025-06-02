@@ -75,6 +75,27 @@ exports.deleteStop = async (id) => {
 
 exports.getStartLocations = async () => {
   return await Stop.find({
-    stop_type: { $in: ["origin", "intermediate"] },
-  }).sort({ route_id: 1, stop_order: 1 });
+    stop_type: "origin" })
+  .sort({ route_id: 1, stop_order: 1 });
+};
+
+exports.getOriginStops = async (type) => {
+  return await Stop.find({ stop_type: type }).select("stop_name").sort({stop_name:1});
+};
+
+
+exports.findDestinationsFromOrigin = async (originName) => {
+  // Step 1: Get origin stop
+  const originStop = await Stop.findOne({ stop_name: originName,stop_type:"origin" });
+  if (!originStop) {
+    throw new Error("stop not found or the stop provided is not an origin stop");
+  }
+
+  // Step 2: Get all destination stops in same route with higher stop_order
+  const destinations=await Stop.find({
+    route_id: originStop.route_id,
+    stop_type: "destination",
+    stop_order: { $gt: originStop.stop_order }
+  }).select("stop_name").sort({stop_name:1});
+  return destinations;
 };
