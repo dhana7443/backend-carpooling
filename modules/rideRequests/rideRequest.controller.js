@@ -4,11 +4,11 @@ exports.sendRideRequest = async (req, res) => {
   try {
     const riderId = req.user.user_id; // from authMiddleware
     console.log(riderId);
-    const { ride_id } = req.body;
-    console.log(ride_id);
-    const request = await rideRequestService.createRideRequest(riderId, ride_id);
+    const { ride_id,from_stop,to_stop} = req.body;
+    console.log(ride_id,from_stop,to_stop);
+    const request = await rideRequestService.createRideRequest(riderId, ride_id,from_stop,to_stop);
     res.status(201).json({ message: "Ride request sent successfully", request });
-    console.log(request);
+    console.log({request});
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -42,6 +42,7 @@ exports.getRiderRequests = async (req, res) => {
   
       const updatedRequest = await rideRequestService.updateRideRequestStatus(requestId, status, driverId);
       res.json({ message: `Request ${status.toLowerCase()} successfully`, updatedRequest });
+      console.log({updatedRequest});
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
@@ -50,12 +51,42 @@ exports.getRiderRequests = async (req, res) => {
   // controllers/driverController.js
 
 
-exports.getDriverRequests = async (req, res) => {
+  exports.getRideRequestsByRideId = async (req, res) => {
+    try {
+      const { rideId } = req.params;
+      const driverId = req.user.user_id; // from authMiddleware
+      console.log(rideId);
+      console.log(driverId);
+      const result = await rideRequestService.getRequestsForRide(rideId, driverId);
+      console.log(result);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error fetching ride requests:", error.message);
+      res.status(500).json({ message: "Server error while fetching ride requests" });
+    }
+  };
+
+  // GET unseen request count
+exports.getUnseenRequestCount = async (req, res) => {
   try {
-    const driverId = req.user.user_id; // from auth middleware
-    const data = await rideRequestService.getRequestsOfDriver(driverId);
-    res.status(200).json({ success: true, rides: data });
+    const { ride_id } = req.params;
+    const count = await rideRequestService.getUnseenRequestCount(ride_id);
+    console.log(count);
+    res.status(200).json({ count });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: 'Failed to get unseen requests', error: error.message });
+  }
+};
+
+// PUT mark requests as seen
+exports.markRequestsAsSeen = async (req, res) => {
+  try {
+    const { ride_id } = req.params;
+    console.log(ride_id);
+    await rideRequestService.markRequestsAsSeen(ride_id);
+    res.status(200).json({ message: 'Requests marked as seen' });
+    console.log("good");
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update requests', error: error.message });
   }
 };

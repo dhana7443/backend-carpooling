@@ -77,8 +77,8 @@ exports.getDestinationsByOrigin = async (req, res) => {
     }
 
     const destinations = await stopService.findDestinationsFromOrigin(origin);
-    console.log(destinations);
-    res.status(200).json({destinations});
+    console.log({destinations});
+    res.status(200).json(destinations);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

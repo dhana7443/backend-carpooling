@@ -52,7 +52,7 @@ exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     const {token,user} = await userService.loginUser({ email, password });
-
+    console.log({token,user});
     res.status(200).json({
       message: "Login successful",
       token: token,
@@ -74,6 +74,7 @@ exports.passwordResetOtp = async (req, res) => {
   try {
     const { email } = req.body;
     const result = await userService.sendPasswordResetOtp(email);
+    console.log(result);
     res.status(200).json(result);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -84,6 +85,7 @@ exports.verifyResetOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
     const result = await userService.verifyResetOtp({ email, otp });
+    console.log(result);
     res.status(200).json(result);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -94,6 +96,7 @@ exports.resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
     const result = await userService.resetPassword({ token, newPassword });
+    console.log(result);
     res.status(200).json(result);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -166,5 +169,24 @@ exports.softDeleteUser = async (req, res) => {
     res.status(200).json({ message: "User soft deleted successfully" });
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+exports.storeFcmToken = async (req, res) => {
+  try {
+    const userId = req.user.user_id; // from auth middleware
+    const { fcmToken } = req.body;
+    console.log(userId);
+    console.log(fcmToken);
+    if (!fcmToken) {
+      return res.status(400).json({ error: "FCM token is required" });
+    }
+
+    const result = await userService.storeFcmTokenService(userId, fcmToken);
+    console.log(result);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error("Error storing FCM token:", err);
+    res.status(500).json({ error: "Something went wrong" });
   }
 };

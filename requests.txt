@@ -75,70 +75,80 @@ db.stops.insertMany([
 //Routes insertion
 db.routes.insertMany([
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e3"), // Stop A
     end_stop_id: ObjectId("682d9bf69e369d8475d861e4"),   // Stop B
-    distance: 10,
+    distance: 1500,
     time: 15,
     cost: 20
   },
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e3"), // Stop A
     end_stop_id: ObjectId("682d9bf69e369d8475d861e5"),   // Stop C
-    distance: 7,
+    distance: 2000,
     time: 20,
     cost: 25
   },
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e3"), // Stop A
     end_stop_id: ObjectId("682d9bf69e369d8475d861e6"),   // Stop D
-    distance: 8,
+    distance: 2500,
     time: 25,
     cost: 30
   },
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e3"), // Stop A
     end_stop_id: ObjectId("682d9bf69e369d8475d861e7"),   // Stop E
-    distance: 17,
+    distance: 3000,
     time: 30,
     cost: 35
   },
   
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e4"), // Stop B
     end_stop_id: ObjectId("682d9bf69e369d8475d861e5"),   // Stop C
-    distance: 17,
-    time: 10,
+    distance: 1500,
+    time: 15,
     cost: 20
   },
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e4"), // Stop B
     end_stop_id: ObjectId("682d9bf69e369d8475d861e6"),   // Stop D
-    distance: 17,
+    distance: 2000,
     time: 20,
     cost: 25
   },
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e4"), // Stop B
     end_stop_id: ObjectId("682d9bf69e369d8475d861e7"),   // Stop E
-    distance: 17,
+    distance: 2500,
     time: 25,
     cost: 30
   },
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e5"), // Stop C
     end_stop_id: ObjectId("682d9bf69e369d8475d861e6"),   // Stop D
-    distance: 17,
+    distance: 1500,
     time: 10,
     cost: 20
   },
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e5"), // Stop C
     end_stop_id: ObjectId("682d9bf69e369d8475d861e7"),   // Stop E
-    distance: 17,
-    time: 20,
-    cost: 25
+    distance: 2000,
+    time: 15,
+    cost: 20
   },
   {
+    route_id:"route_KtoPG",
     start_stop_id: ObjectId("682d9bf69e369d8475d861e6"), // Stop D
     end_stop_id: ObjectId("682d9bf69e369d8475d861e7"),   // Stop E
     distance: 17,
@@ -201,6 +211,7 @@ db.routes.insertMany([
 
   db.routes.insertMany([
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835504b59a577ea67d861e0"), // Stop A
     end_stop_id: ObjectId("6835504b59a577ea67d861e1"),   // Stop B
     distance: 2000,
@@ -208,6 +219,7 @@ db.routes.insertMany([
     cost: 30
   },
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835504b59a577ea67d861e0"), // Stop A
     end_stop_id: ObjectId("6835511859a577ea67d861e2"),   // Stop C
     distance: 2500,
@@ -215,6 +227,7 @@ db.routes.insertMany([
     cost: 35
   },
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835504b59a577ea67d861e0"), // Stop A
     end_stop_id: ObjectId("6835511859a577ea67d861e3"),   // Stop D
     distance: 3000,
@@ -222,6 +235,7 @@ db.routes.insertMany([
     cost: 40
   },
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835504b59a577ea67d861e0"), // Stop A
     end_stop_id: ObjectId("683552df59a577ea67d861e4"),   // Stop E
     distance: 3500,
@@ -230,6 +244,7 @@ db.routes.insertMany([
   },
   
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835504b59a577ea67d861e1"), // Stop B
     end_stop_id: ObjectId("6835511859a577ea67d861e2"),   // Stop C
     distance: 1000,
@@ -237,6 +252,7 @@ db.routes.insertMany([
     cost: 20
   },
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835504b59a577ea67d861e1"), // Stop B
     end_stop_id: ObjectId("6835511859a577ea67d861e3"),   // Stop D
     distance: 1500,
@@ -244,6 +260,7 @@ db.routes.insertMany([
     cost: 25
   },
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835504b59a577ea67d861e1"), // Stop B
     end_stop_id: ObjectId("683552df59a577ea67d861e4"),   // Stop E
     distance: 2000,
@@ -251,6 +268,7 @@ db.routes.insertMany([
     cost: 30
   },
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835511859a577ea67d861e2"), // Stop C
     end_stop_id: ObjectId("6835511859a577ea67d861e3"),   // Stop D
     distance: 1000,
@@ -258,6 +276,7 @@ db.routes.insertMany([
     cost: 20
   },
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835511859a577ea67d861e2"), // Stop C
     end_stop_id: ObjectId("683552df59a577ea67d861e4"),   // Stop E
     distance: 1500,
@@ -265,6 +284,7 @@ db.routes.insertMany([
     cost: 25
   },
   {
+    route_id:"route_DCtoBG",
     start_stop_id: ObjectId("6835511859a577ea67d861e3"), // Stop D
     end_stop_id: ObjectId("683552df59a577ea67d861e4"),   // Stop E
     distance: 1000,

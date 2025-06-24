@@ -4,6 +4,11 @@ const mongoose = require("mongoose");
 
 const routeStopSchema = new mongoose.Schema(
   {
+    route_id: {
+      type: String, // route_id is a predefined string in the Stop model
+      required: true,
+      index: true
+    },
     start_stop_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Stop", // Assumes your stop collection is named 'stops' and model is 'Stop'

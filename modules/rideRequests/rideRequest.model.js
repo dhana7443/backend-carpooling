@@ -13,6 +13,14 @@ const rideRequestSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  from_stop: {
+    type: String,
+     required: true 
+  },
+  to_stop: { 
+    type: String, 
+    required: true 
+  },
   status: {
     type: String,
     enum: ["Pending", "Accepted", "Rejected"],
@@ -21,7 +29,11 @@ const rideRequestSchema = new mongoose.Schema({
   requested_at: {
     type: Date,
     default: Date.now,
-  }
+  },
+  is_seen: { 
+    type: Boolean,
+     default: false 
+  },
 });
 
 module.exports = mongoose.model("RideRequest", rideRequestSchema);

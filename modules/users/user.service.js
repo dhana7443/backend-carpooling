@@ -347,3 +347,14 @@ exports.softDeleteUser = async (userId) => {
   user.is_deleted = true;
   await user.save();
 };
+
+exports.storeFcmTokenService = async (userId, fcmToken) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
+
+  user.fcmToken = fcmToken;
+  await user.save();
+  console.log(user.fcmToken);
+  console.log(user);
+  return { message: "FCM token saved successfully" };
+};

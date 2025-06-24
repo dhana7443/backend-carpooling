@@ -65,6 +65,9 @@ const userSchema = new mongoose.Schema(
       type:Date,
       select:false
     },
+    fcmToken:{
+      type:String
+    },
     is_deleted: {
       type: Boolean,
       default: false

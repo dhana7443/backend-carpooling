@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { authMiddleware,isAdmin } = require("../../middlewares/auth");
 
-const {registerUser,verifyEmailOtp,resendOtp,loginUser,passwordResetOtp,verifyResetOtp,resetPassword,getProfile,updateProfile,changePassword,getAllUsers,getUserById,softDeleteUser} = require("./user.controller");
+const {registerUser,verifyEmailOtp,resendOtp,loginUser,passwordResetOtp,verifyResetOtp,resetPassword,getProfile,updateProfile,changePassword,getAllUsers,getUserById,softDeleteUser, storeFcmToken} = require("./user.controller");
 router.post("/register", registerUser);
 router.post("/verify-otp",verifyEmailOtp);
 router.post("/resend-otp",resendOtp);
@@ -16,6 +16,6 @@ router.put("/change-password", authMiddleware, changePassword);
 router.get("/all", authMiddleware, isAdmin, getAllUsers);
 router.get("/:id", authMiddleware, isAdmin, getUserById);
 router.delete("/:id", authMiddleware, isAdmin, softDeleteUser);
-
+router.post("/store-fcm-token",authMiddleware,storeFcmToken)
 
 module.exports = router;

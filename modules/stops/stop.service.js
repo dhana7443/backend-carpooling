@@ -80,7 +80,7 @@ exports.getStartLocations = async () => {
 };
 
 exports.getOriginStops = async (type) => {
-  return await Stop.find({ stop_type: type }).select("stop_name").sort({stop_name:1});
+  return await Stop.find({ stop_type: type }).select("stop_name _id").sort({stop_name:1});
 };
 
 
@@ -96,6 +96,6 @@ exports.findDestinationsFromOrigin = async (originName) => {
     route_id: originStop.route_id,
     stop_type: "destination",
     stop_order: { $gt: originStop.stop_order }
-  }).select("stop_name").sort({stop_name:1});
+  }).select("stop_name _id").sort({stop_name:1});
   return destinations;
 };

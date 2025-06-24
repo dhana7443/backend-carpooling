@@ -1,23 +1,53 @@
 const RideRequest = require("./rideRequest.model");
 const Ride=require("../rides/ride.model");
 const User=require("../users/user.model");
-const stop=require("../stops/stop.model");
+const Stop=require("../stops/stop.model");
+const admin=require("../../config/firebase");
 
-exports.createRideRequest = async (riderId, rideId) => {
-  // Prevent duplicate request
-  const existing = await RideRequest.findOne({ rider_id: riderId, ride_id: rideId });
+
+exports.createRideRequest = async (riderId, rideId, fromStop, toStop) => {
+  const existing = await RideRequest.findOne({
+    rider_id: riderId,
+    ride_id: rideId,
+    from_stop: fromStop,
+    to_stop: toStop,
+  });
   if (existing) {
-    throw new Error("Ride request already sent.");
+    throw new Error("Ride request already sent for this route.");
   }
 
   const request = new RideRequest({
     rider_id: riderId,
-    ride_id: rideId
+    ride_id: rideId,
+    from_stop: fromStop,
+    to_stop: toStop
   });
 
   await request.save();
+
+  // 🔔 Send notification to the driver
+  const ride = await Ride.findById(rideId);
+  const driver = await User.findById(ride.driver_id);
+  const rider = await User.findById(riderId);
+
+  if (driver?.fcmToken) {
+    await admin.messaging().send({
+      token: driver.fcmToken,
+      notification: {
+        title: ' New Ride Request',
+        body: `${rider.name} requested a ride from ${fromStop} to ${toStop}`,
+      },
+      data: {
+        rideId: rideId.toString(),
+        riderId: riderId.toString()
+      }
+    });
+  }
+
+  console.log(driver);
   return request;
 };
+
 
 
 exports.getRequestsByRider = async (riderId) => {
@@ -49,7 +79,7 @@ exports.updateRideRequestStatus = async (requestId, status, driverId) => {
     throw new Error("Invalid status. Must be 'Accepted' or 'Rejected'.");
   }
 
-  const rideRequest = await RideRequest.findById(requestId);
+  const rideRequest = await RideRequest.findById(requestId).populate('rider_id');
   if (!rideRequest) {
     throw new Error("Ride request not found");
   }
@@ -64,43 +94,76 @@ exports.updateRideRequestStatus = async (requestId, status, driverId) => {
   }
   
   rideRequest.status = status;
+  if (status==="Accepted"){
+    ride.available_seats-=1;
+  }
   await rideRequest.save();
+  const rider=rideRequest.rider_id;
+  if (rider.fcmToken){
+    let message='';
+    if (status==='Accepted') message='Congratulations! Your ride request has been accepted!';
+    else if (status=='Rejected') message='Sorry, Your ride request was rejected.';
 
+    await admin.messaging().send({
+      token: rider.fcmToken,
+      notification: {
+        title: 'Ride Request Update',
+        body: message,
+      },
+    });
+    console.log(message);
+  }
   return rideRequest;
 };
 
 
-exports.getRequestsOfDriver = async (driverId) => {
-  const rides = await Ride.find({ driver_id: driverId }).lean();
+exports.getRequestsForRide = async (rideId, driverId) => {
+  const ride = await Ride.findOne({ _id: rideId, driver_id: driverId });
+  if (!ride) {
+    throw new Error("Ride not found or unauthorized access");
+  }
+  const [originStop, destinationStop, requests] = await Promise.all([
+    Stop.findById(ride.origin_stop_id),
+    Stop.findById(ride.destination_stop_id),
+    RideRequest.find({ ride_id: ride._id }).populate("rider_id", "_id name email"),
+  ]);
+  
+  return {
+    ride_id: ride._id,
+    origin: originStop?.stop_name || "Unknown",
+    destination: destinationStop?.stop_name || "Unknown",
+    departure_time: ride.departure_time,
+    available_seats: ride.available_seats,
+    status: ride.status,
+    requests: requests.map((req) => ({
+      rider_from_stop: req.from_stop,
+      rider_to_stop: req.to_stop,
+      request_id: req._id,
+      status: req.status,
+      requested_at: req.requested_at,
+      rider: {
+        id: req.rider_id._id,
+        name: req.rider_id.name,
+        email: req.rider_id.email,
+      },
+    })),
+  };
+};
 
-  const result = await Promise.all(
-    rides.map(async (ride) => {
-      const [originStop, destinationStop, requests] = await Promise.all([
-        Stop.findById(ride.origin_stop_id),
-        Stop.findById(ride.destination_stop_id),
-        RideRequest.find({ ride_id: ride._id }).populate("rider_id", "name email")
-      ]);
+// services/rideRequest.service.js
 
-      return {
-        ride_id: ride._id,
-        origin: originStop?.stop_name || "Unknown",
-        destination: destinationStop?.stop_name || "Unknown",
-        departure_time: ride.departure_time,
-        available_seats: ride.available_seats,
-        status: ride.status,
-        requests: requests.map(req => ({
-          request_id: req._id,
-          status: req.status,
-          requested_at: req.requested_at,
-          rider: {
-            id: req.rider_id._id,
-            name: req.rider_id.name,
-            email: req.rider_id.email
-          }
-        }))
-      };
-    })
+exports.markRequestsAsSeen = async (rideId) => {
+  await RideRequest.updateMany(
+    { ride_id: rideId, is_seen: false },
+    { $set: { is_seen: true } }
   );
+};
 
-  return result;
+exports.getUnseenRequestCount = async (rideId) => {
+  const count = await RideRequest.countDocuments({
+    ride_id: rideId,
+    status: 'Pending',
+    is_seen: false,
+  });
+  return count;
 };
